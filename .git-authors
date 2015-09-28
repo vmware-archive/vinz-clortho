@@ -1,0 +1,11 @@
+pairs:
+  lm: Liam Morley
+  nc: Navyasri Canumalla
+
+email_addresses:
+  lm: lmorley@pivotal.io
+  nc: ncanumalla@pivotal.io
+
+sshkey_paths:
+   lm: /Volumes/lmorley/.ssh/id_rsa
+   nc: /Volumes/ncanumalla/.ssh/id_rsa
