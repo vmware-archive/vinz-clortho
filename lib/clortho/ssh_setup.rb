@@ -47,6 +47,8 @@ module Clortho
       git_authors_location = File.join(current_dir, '.git-authors')
       if File.exist?(git_authors_location)
         git_authors_location
+      elsif current_dir == '/'
+        raise Errno::ENOENT.new
       else
         git_authors_file(File.expand_path('..', current_dir))
       end

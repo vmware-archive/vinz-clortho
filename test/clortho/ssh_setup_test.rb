@@ -47,6 +47,15 @@ module Clortho
       SSHSetup.new('hp')
     end
 
+    def test_ssh_setup_fails_if_no_git_authors_found
+      File.unstub(:exist?)
+      YAML.unstub(:load_file)
+      File.expects(:exist?).at_least_once.returns false
+      error = assert_raises(Errno::ENOENT) {
+        SSHSetup.new('hp')
+      }
+    end
+
     def test_login_sets_key_expiry_to_lunchtime_during_morning
       expected_expiration = Time.new(2015, 9, 28, 12, 30)
       ssh_setup = login_at Time.new(2015, 9, 28, 6, 0)
