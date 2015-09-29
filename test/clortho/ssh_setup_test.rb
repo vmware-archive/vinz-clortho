@@ -21,11 +21,11 @@ module Clortho
     end
 
     def test_login_calls_ssh_add
-      ssh_setup = SSHSetup.new("hp")
+      ssh_setup = SSHSetup.new
       Time.stubs(:now).returns Time.new(2015, 9, 28, 6, 0)
       expected_ttl = 23400
       ssh_setup.expects(:ssh_add).with expected_ttl, "/Volumes/hpotter/.ssh/id_rsa"
-      ssh_setup.login
+      ssh_setup.login("hp")
     end
 
     def test_ssh_setup_looks_for_git_authors_in_any_parent_directory
@@ -44,7 +44,7 @@ module Clortho
 
       YAML.unstub(:load_file)
       YAML.expects(:load_file).with(parent_dir_git_authors).returns initial_committers
-      SSHSetup.new('hp')
+      SSHSetup.new
     end
 
     def test_ssh_setup_fails_if_no_git_authors_found
@@ -52,7 +52,7 @@ module Clortho
       YAML.unstub(:load_file)
       File.expects(:exist?).at_least_once.returns false
       error = assert_raises(Errno::ENOENT) {
-        SSHSetup.new('hp')
+        SSHSetup.new
       }
     end
 
@@ -77,24 +77,26 @@ module Clortho
     end
 
     def test_ssh_setup_displays_usage_when_initials_are_missing
+      ssh_setup = SSHSetup.new
       error = assert_raises(ArgumentError) {
-        SSHSetup.new(nil)
+        ssh_setup.login(nil)
       }
       assert_match /Usage/, error.message
     end
 
     def test_ssh_setup_throws_exception_when_unable_to_find_initials
+      ssh_setup = SSHSetup.new
       error = assert_raises(SSHSetup::UserNotFoundError) {
-        ssh_setup = SSHSetup.new("rw")
+        ssh_setup.login("rw")
       }
       assert_match /Unable to find committer initials in mapping/, error.message
     end
 
     def test_login_throws_exception_when_unable_to_find_key_file
       File.expects(:exist?).with("/Volumes/hpotter/.ssh/id_rsa").returns(false)
-      ssh_setup = SSHSetup.new("hp")
+      ssh_setup = SSHSetup.new
       error = assert_raises(Errno::ENOENT) {
-        ssh_setup.login
+        ssh_setup.login("hp")
       }
       # assert_match /Unable to find committer initials in mapping/, error.message
     end
@@ -102,9 +104,9 @@ module Clortho
     private
 
     def login_at(time)
-      SSHSetup.new("hp").tap do |ssh_setup|
+      SSHSetup.new.tap do |ssh_setup|
         Time.stubs(:now).returns(time)
-        ssh_setup.login
+        ssh_setup.login("hp")
       end
     end
   end

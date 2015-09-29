@@ -3,35 +3,31 @@ require 'optparse'
 
 require_relative '../lib/clortho'
 
-parser = OptionParser.new do |opts|
-  opts.banner = 'Usage: git ssh-login [options]'
-
-  opts.on('-h', '--help', 'Shows help') do |v|
-    puts parser
-    exit 0
-  end
-  opts.on('-v', '--version', 'Returns version') do |v|
-    puts Clortho::VERSION
-    exit 0
-  end
-end
-
 begin
+  ssh_setup = Clortho::SSHSetup.new
+
+  parser = OptionParser.new do |opts|
+    opts.banner = ssh_setup.usage_msg
+
+    opts.on('-h', '--help', 'Shows help') do |v|
+      puts parser
+      exit 0
+    end
+    opts.on('-v', '--version', 'Returns version') do |v|
+      puts Clortho::VERSION
+      exit 0
+    end
+  end
+
   parser.parse!
-  ssh_setup = Clortho::SSHSetup.new(ARGV[0])
+  ssh_setup.login(ARGV[0])
 rescue OptionParser::InvalidOption => e
   puts parser
   exit 1
 rescue => e
   puts e.message
+  puts parser
   exit (e.is_a? Clortho::SSHSetup::UserNotFoundError) ? 2 : 1
-end
-
-begin
-  ssh_setup.login
-rescue => e
-  puts e.message
-  exit 1
 end
 
 puts "Key will expire at #{ssh_setup.key_expiry}"
