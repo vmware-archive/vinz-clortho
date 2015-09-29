@@ -17,4 +17,4 @@ See the [.git-authors](.git-authors) file in this repository as a full example.
 
 
 ## Usage
-Run `gitlogin.rb <committer-initials>` to add the SSH key corresponding to the committer's initials. (Currently, this must be run in the same directory as the `.git-authors` file.) The key expiry is set to 12:30 PM if executed before 12:30 PM, 6:00 PM if executed after that but before 6:00 PM, or within 15 minutes if executed after 6:00 PM.
+Run `gitlogin.rb <committer-initials>` to add the SSH key corresponding to the committer's initials. The key expiry is set to 12:30 PM if executed before 12:30 PM, 6:00 PM if executed after that but before 6:00 PM, or within 15 minutes if executed after 6:00 PM.
