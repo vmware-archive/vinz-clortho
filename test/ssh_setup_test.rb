@@ -14,7 +14,8 @@ class SSHSetupTest < Minitest::Test
                           "sshkey_paths" =>
                               {"hp" => "/Volumes/hpotter/.ssh/id_rsa",
                                "hg" => "/Volumes/hgranger/.ssh/id_rsa"}}
-    YAML.expects('load_file').with('.git-authors').returns initial_committers
+    File.expects(:exist?).with(File.join(Dir.pwd, '.git-authors')).returns true
+    YAML.expects(:load_file).with(File.join(Dir.pwd, '.git-authors')).returns initial_committers
     SSHSetup.any_instance.stubs(:ssh_add)
     File.stubs(:exist?).with("/Volumes/hpotter/.ssh/id_rsa").returns(true)
   end
@@ -25,6 +26,25 @@ class SSHSetupTest < Minitest::Test
     expected_ttl = 23400
     ssh_setup.expects(:ssh_add).with expected_ttl, "/Volumes/hpotter/.ssh/id_rsa"
     ssh_setup.login
+  end
+
+  def test_ssh_setup_looks_for_git_authors_in_any_parent_directory
+    initial_committers = {"authors" => {"hp" => "Harry Potter", "hg" => "Hermione Granger"},
+                          "emails" => {"hp" => "hpotter@pivotal.io", "hg" => "hgranger@pivotal.io"},
+                          "sshkey_paths" =>
+                              {"hp" => "/Volumes/hpotter/.ssh/id_rsa",
+                               "hg" => "/Volumes/hgranger/.ssh/id_rsa"}}
+
+
+    current_dir_git_authors = File.join(Dir.pwd, '.git-authors')
+    parent_dir_git_authors = File.join(File.expand_path('..', Dir.pwd), '.git-authors')
+    File.unstub(:exist?)
+    File.expects(:exist?).with(current_dir_git_authors).returns false
+    File.expects(:exist?).with(parent_dir_git_authors).returns true
+
+    YAML.unstub(:load_file)
+    YAML.expects(:load_file).with(parent_dir_git_authors).returns initial_committers
+    SSHSetup.new('hp')
   end
 
   def test_login_sets_key_expiry_to_lunchtime_during_morning
@@ -70,7 +90,7 @@ class SSHSetupTest < Minitest::Test
     # assert_match /Unable to find committer initials in mapping/, error.message
   end
 
- private
+  private
 
   def login_at(time)
     SSHSetup.new("hp").tap do |ssh_setup|

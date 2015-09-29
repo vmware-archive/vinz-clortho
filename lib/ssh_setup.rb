@@ -8,7 +8,7 @@ class SSHSetup
 
   def initialize(initials)
     @scriptname = File.basename(__FILE__)
-    git_authors = YAML::load_file('.git-authors')
+    git_authors = YAML::load_file(git_authors_file)
     @key_paths = git_authors['sshkey_paths']
     @key_path = @key_paths[initials]
     raise ArgumentError.new(usage_msg) unless initials
@@ -39,6 +39,15 @@ class SSHSetup
       end_of_day
     else
       in_fifteen_minutes
+    end
+  end
+
+  def git_authors_file(current_dir = Dir.pwd)
+    git_authors_location = File.join(current_dir, '.git-authors')
+    if File.exist?(git_authors_location)
+      git_authors_location
+    else
+      git_authors_file(File.expand_path('..', current_dir))
     end
   end
 
