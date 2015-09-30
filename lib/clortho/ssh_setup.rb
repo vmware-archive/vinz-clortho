@@ -18,9 +18,12 @@ module Clortho
       ssh_add(key_ttl, key_path)
     end
 
-    def login_all
-      set_key_expiry
-      key_ttl = @key_expiry.to_i - Time.now.to_i
+    def login_all(key_ttl = nil)
+      if key_ttl.nil?
+        set_key_expiry
+        key_ttl = @key_expiry.to_i - Time.now.to_i
+      end
+
       @git_authors_mgr.all_key_paths.each do |path|
         ssh_add(key_ttl, path) if File.exist?(path)
       end

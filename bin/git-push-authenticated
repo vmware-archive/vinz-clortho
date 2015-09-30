@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+require_relative '../lib/clortho/ssh_setup'
+
+begin
+  Clortho::SSHSetup.new.login_all(5)
+  `git push "$@"`
+rescue => e
+  puts e.message
+  exit 1
+end
