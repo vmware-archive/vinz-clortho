@@ -1,4 +1,3 @@
-require 'octokit'
 require 'minitest/autorun'
 require 'mocha/mini_test'
 require_relative '../../lib/clortho/github_key_uploader'
@@ -18,10 +17,12 @@ module Clortho
 
     def test_uploads_a_key
       uploader = GitHubKeyUploader.new('hp', 'hpotter', 'voldemort')
+      client_mock = mock()
+      client_mock.expects(:add_key).with('Secret Key', 'ssh-rsa AAA...')
+      uploader.expects(:client).returns client_mock
       file_mock = mock()
       file_mock.expects(:read).returns 'ssh-rsa AAA...'
       File.expects(:open).with("/Volumes/hpotter/.ssh/id_rsa.pub", 'r').returns file_mock
-      Octokit::Client.any_instance.expects(:add_key).with('Secret Key', 'ssh-rsa AAA...')
       uploader.upload('Secret Key')
     end
   end
