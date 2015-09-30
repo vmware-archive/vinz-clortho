@@ -2,7 +2,7 @@
 require_relative '../lib/clortho/ssh_setup'
 
 begin
-  SSHSetup.new.instant_login
+  Clortho::SSHSetup.new.instant_login
 rescue => e
   puts e.message
   exit 1

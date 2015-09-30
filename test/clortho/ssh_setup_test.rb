@@ -69,7 +69,6 @@ module Clortho
       error = assert_raises(Errno::ENOENT) {
         ssh_setup.login("hp")
       }
-      # assert_match /Unable to find committer initials in mapping/, error.message
     end
 
     private
