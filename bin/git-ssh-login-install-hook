@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
-path_to_pre_push_hook = File.join(`git rev-parse --show-toplevel`.chomp, '.git', 'hooks', 'pre-push')
+path_to_post_commit_hook = File.join(`git rev-parse --show-toplevel`.chomp, '.git', 'hooks', 'post-commit')
 
-cmd = orig_cmd = "exec git-ssh-login-instant"
-cmd = "#!/bin/sh\n#{cmd}" unless File.exist?(path_to_pre_push_hook)
+cmd = orig_cmd = "exec git-ssh-login-all"
+cmd = "#!/bin/sh\n#{cmd}" unless File.exist?(path_to_post_commit_hook)
 
-File.open(path_to_pre_push_hook, 'a+', 0755) do |file|
+File.open(path_to_post_commit_hook, 'a+', 0755) do |file|
   file.write cmd unless file.read.include? orig_cmd
 end
