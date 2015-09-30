@@ -40,7 +40,7 @@ rescue OptionParser::InvalidOption => e
 rescue => e
   puts e.message
   puts parser
-  exit (e.is_a? Clortho::SSHSetup::UserNotFoundError) ? 2 : 1
+  exit (e.is_a? Clortho::UserNotFoundError) ? 2 : 1
 end
 
 puts "Key will expire at #{ssh_setup.key_expiry}"
