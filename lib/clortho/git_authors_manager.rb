@@ -7,6 +7,10 @@ module Clortho
       @git_authors = YAML::load_file(git_authors_file)
     end
 
+    def all_key_paths
+      @git_authors['sshkey_paths'].values
+    end
+
     def key_path_for(initials)
       raise ArgumentError.new(usage_msg) unless initials
       @git_authors['sshkey_paths'][initials] or raise UserNotFoundError.new(user_not_found_msg)

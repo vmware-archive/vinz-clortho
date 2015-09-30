@@ -18,6 +18,12 @@ module Clortho
       ssh_add(key_ttl, key_path)
     end
 
+    def instant_login
+      @git_authors_mgr.all_key_paths.each do |path|
+        ssh_add(1, path) if File.exist?(path)
+      end
+    end
+
     def ssh_add(key_ttl, key_path)
       `ssh-add -t #{key_ttl} #{key_path}`
     end

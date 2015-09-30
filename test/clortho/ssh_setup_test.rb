@@ -40,6 +40,22 @@ module Clortho
       assert_equal expected_expiration, ssh_setup.key_expiry
     end
 
+    def test_instant_login_calls_ssh_add_with_1sec_ttl
+      ssh_setup = SSHSetup.new
+      File.expects(:exist?).with("/Volumes/hpotter/.ssh/id_rsa").returns false
+      File.expects(:exist?).with("/Volumes/hgranger/.ssh/id_rsa").returns true
+      ssh_setup.expects(:ssh_add).with 1, "/Volumes/hgranger/.ssh/id_rsa"
+      ssh_setup.instant_login
+    end
+
+    def test_instant_login_does_not_call_ssh_add_if_no_key_exists
+      ssh_setup = SSHSetup.new
+      File.expects(:exist?).with("/Volumes/hpotter/.ssh/id_rsa").returns false
+      File.expects(:exist?).with("/Volumes/hgranger/.ssh/id_rsa").returns false
+      ssh_setup.expects(:ssh_add).never
+      ssh_setup.instant_login
+    end
+
     def test_login_sets_key_expiry_to_within_15_minutes_as_default
       expected_expiration = Time.new(2015, 9, 28, 18, 15)
       ssh_setup = login_at(Time.new(2015, 9, 28, 18, 0))
