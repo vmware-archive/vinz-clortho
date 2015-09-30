@@ -18,7 +18,7 @@ begin
       puts Clortho::VERSION
       exit 0
     end
-    opts.on('--add-to-github', 'Adds a GitHub key') do |v|
+    opts.on('--add-to-github', 'Adds a public key to GitHub') do |v|
       print "Enter your username: "
       username = gets.chomp
       print "Enter your password: "
