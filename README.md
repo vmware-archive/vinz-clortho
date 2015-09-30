@@ -27,3 +27,5 @@ Usage: git ssh-login [options] (committer-initials)
     -v, --version                    Returns version
         --add-to-github              Adds a public key to GitHub
 ```
+
+You can also use `git push-authenticated [args]` to authenticate all existing keys for a period of 5 seconds and then push immediately. It takes the same arguments as `git push` (and just passes them on).
