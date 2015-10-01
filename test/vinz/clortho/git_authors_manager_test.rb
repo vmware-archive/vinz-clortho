@@ -1,10 +1,6 @@
-require 'yaml'
-require 'minitest/autorun'
-require 'mocha/mini_test'
-require_relative '../../lib/clortho/git_authors_manager'
+require 'test_helper'
 
-
-module Clortho
+module Vinz::Clortho
   class GitAuthorsManagerTest < Minitest::Test
     def setup
       @initial_committers = {"authors" => {"hp" => "Harry Potter", "hg" => "Hermione Granger"},
@@ -48,7 +44,7 @@ module Clortho
       error = assert_raises(ArgumentError) {
         mgr.key_path_for nil
       }
-      assert_match /Usage/, error.message
+      assert_equal 'Committer initials are required', error.message
     end
 
     def test_all_key_paths
@@ -57,7 +53,7 @@ module Clortho
       YAML.expects(:load_file).with(current_dir_git_authors).returns @initial_committers
 
       mgr = GitAuthorsManager.new
-      mgr.all_key_paths.each do |key_path|
+      mgr.all_key_paths.values.each do |key_path|
         assert_includes ["/Volumes/hpotter/.ssh/id_rsa", "/Volumes/hgranger/.ssh/id_rsa"], key_path
       end
     end

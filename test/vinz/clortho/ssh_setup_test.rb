@@ -1,10 +1,6 @@
-require 'yaml'
-require 'minitest/autorun'
-require 'mocha/mini_test'
-require_relative '../../lib/clortho/ssh_setup'
+require 'test_helper'
 
-
-module Clortho
+module Vinz::Clortho
   class SSHSetupTest < Minitest::Test
 
     def setup

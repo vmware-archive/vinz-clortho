@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
-require_relative '../lib/clortho/ssh_setup'
+require 'vinz/clortho'
 
 begin
-  Clortho::SSHSetup.new.login_all(5)
+  Vinz::Clortho::SSHSetup.new.login_all(5)
   `git push "$@"`
 rescue => e
   puts e.message

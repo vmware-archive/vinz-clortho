@@ -1,8 +1,6 @@
-require 'minitest/autorun'
-require 'mocha/mini_test'
-require_relative '../../lib/clortho/github_key_uploader'
+require 'test_helper'
 
-module Clortho
+module Vinz::Clortho
   class GitHubKeyUploaderTest < Minitest::Test
     def setup
       @initial_committers = {"authors" => {"hp" => "Harry Potter", "hg" => "Hermione Granger"},

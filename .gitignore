@@ -1,1 +1,8 @@
+/.bundle/
+/.yardoc
+/Gemfile.lock
+/_yardoc/
+/doc/
+/pkg/
+/tmp/
 .idea/
