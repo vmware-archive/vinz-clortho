@@ -3,7 +3,7 @@ require 'vinz/clortho'
 
 begin
   Vinz::Clortho::SSHSetup.new.login_all(5)
-  `git push "$@"`
+  `git push #{ARGV.join ' '}`
 rescue => e
   puts e.message
   exit 1
