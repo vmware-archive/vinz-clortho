@@ -15,13 +15,13 @@ sshkey_paths:
 ```
 See the [.git-authors](.git-authors) file in this repository as a full example.
 
-Vinz Clortho also requires the [Octokit](https://github.com/octokit/octokit.rb) rubygem for communicating with GitHub. You can install this via `gem install octokit`.
 
 ## Usage
-Run `git ssh-login (committer-initials)` to add the SSH key corresponding to the committer's initials. The key expiry is set to 12:30 PM if executed before 12:30 PM, 6:00 PM if executed after that but before 6:00 PM, or within 15 minutes if executed after 6:00 PM.
+
+Run `git ssh-login [committer-initials]` to add the SSH key corresponding to the committer's initials. If no committer initials are included, then all available keys will be added. The key expiry is set to 12:30 PM if executed before 12:30 PM, 6:00 PM if executed after that but before 6:00 PM, or within 15 minutes if executed after 6:00 PM.
 
 ```
-Usage: git ssh-login [options] (committer-initials)
+Usage: git ssh-login [options] [committer-initials]
 
     -h, --help                       Shows help
     -v, --version                    Returns version

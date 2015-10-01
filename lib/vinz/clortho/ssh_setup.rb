@@ -7,12 +7,16 @@ module Vinz
         @git_authors_mgr = GitAuthorsManager.new
       end
 
-      def login(initials)
+      def login(initials = nil)
         set_key_expiry
         key_ttl = @key_expiry.to_i - Time.now.to_i
-        key_path = @git_authors_mgr.key_path_for initials
-        raise Errno::ENOENT.new unless File.exist? key_path
-        ssh_add(key_ttl, key_path)
+        if initials.nil?
+          login_all key_ttl
+        else
+          key_path = @git_authors_mgr.key_path_for initials
+          raise Errno::ENOENT.new unless File.exist? key_path
+          ssh_add(key_ttl, key_path)
+        end
       end
 
       def login_all(key_ttl = nil)
@@ -35,7 +39,7 @@ module Vinz
           "\t#{committer_initials} : #{keypath}"
         end
         msg = <<-MSG
-Usage: git ssh-login [options] (committer-initials)
+Usage: git ssh-login [options] [committer-initials]
 
 known committers:
 #{committers_and_keypaths.join("\n")}

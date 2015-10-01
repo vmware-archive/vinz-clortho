@@ -15,12 +15,23 @@ module Vinz::Clortho
       File.stubs(:exist?).with("/Volumes/hpotter/.ssh/id_rsa").returns(true)
     end
 
-    def test_login_calls_ssh_add
+    def test_login_with_initials_adds_key_to_ssh
       ssh_setup = SSHSetup.new
       Time.stubs(:now).returns Time.new(2015, 9, 28, 6, 0)
       expected_ttl = 23400
       ssh_setup.expects(:ssh_add).with expected_ttl, "/Volumes/hpotter/.ssh/id_rsa"
       ssh_setup.login("hp")
+    end
+
+    def test_login_without_initials_adds_all_keys_to_ssh
+      File.expects(:exist?).with("/Volumes/hgranger/.ssh/id_rsa").returns(true)
+
+      ssh_setup = SSHSetup.new
+      Time.stubs(:now).returns Time.new(2015, 9, 28, 6, 0)
+      expected_ttl = 23400
+      ssh_setup.expects(:ssh_add).with expected_ttl, "/Volumes/hpotter/.ssh/id_rsa"
+      ssh_setup.expects(:ssh_add).with expected_ttl, "/Volumes/hgranger/.ssh/id_rsa"
+      ssh_setup.login
     end
 
     def test_login_sets_key_expiry_to_lunchtime_during_morning
