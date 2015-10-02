@@ -4,7 +4,7 @@ module Vinz
   module Clortho
     class GitHubKeyUploader
       def initialize(initials, username, password)
-        @manager = GitAuthorsManager.new
+        @manager = SSHKeyPathManager.new
         @initials = initials
         @username, @password = username, password
       end

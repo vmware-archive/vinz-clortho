@@ -4,7 +4,7 @@ module Vinz
       attr_reader :key_expiry
 
       def initialize
-        @git_authors_mgr = GitAuthorsManager.new
+        @ssh_key_path_mgr = SSHKeyPathManager.new
       end
 
       def login(initials = nil)
@@ -13,7 +13,7 @@ module Vinz
         if initials.nil?
           login_all key_ttl
         else
-          key_path = @git_authors_mgr.key_path_for initials
+          key_path = @ssh_key_path_mgr.key_path_for initials
           raise Errno::ENOENT.new unless File.exist? key_path
           ssh_add(key_ttl, key_path)
         end
@@ -25,7 +25,8 @@ module Vinz
           key_ttl = @key_expiry.to_i - Time.now.to_i
         end
 
-        @git_authors_mgr.all_key_paths.values.each do |path|
+        @ssh_key_path_mgr.key_paths.each do |key_path|
+          path = key_path.path
           ssh_add(key_ttl, path) if File.exist?(path)
         end
       end
@@ -35,8 +36,8 @@ module Vinz
       end
 
       def usage_msg
-        committers_and_keypaths = @git_authors_mgr.all_key_paths.map do |committer_initials, keypath|
-          "\t#{committer_initials} : #{keypath}"
+        committers_and_keypaths = @ssh_key_path_mgr.key_paths.map do |key_path|
+          "\t#{key_path.initials} : #{key_path.path}"
         end
         msg = <<-MSG
 Usage: git ssh-login [options] [committer-initials]
