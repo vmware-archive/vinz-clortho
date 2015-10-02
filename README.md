@@ -15,6 +15,11 @@ sshkey_paths:
 ```
 See the [.git-authors](.git-authors) file in this repository as a full example.
 
+## Installation
+
+```
+gem install vinz-clortho
+```
 
 ## Usage
 
