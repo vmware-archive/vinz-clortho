@@ -1,10 +1,4 @@
 #!/usr/bin/env ruby
 require 'vinz/clortho'
 
-begin
-  Vinz::Clortho::SSHSetup.new.login_all(5)
-  `git push #{ARGV.join ' '}`
-rescue => e
-  puts e.message
-  exit 1
-end
+Vinz::Clortho::Cli::PushAuthenticated.new.perform(*ARGV)
