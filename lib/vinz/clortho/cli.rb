@@ -1,4 +1,6 @@
-module Vinz::Clortho
-  module Cli
+module Vinz
+  module Clortho
+    module Cli
+    end
   end
 end

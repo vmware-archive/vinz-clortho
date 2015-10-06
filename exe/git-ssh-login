@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 require 'optparse'
-require 'io/console'
 require 'vinz/clortho'
 
 begin
   ssh_setup = Vinz::Clortho::SSHSetup.new
   initials = ARGV[0]
+  sshlogin_cli = Vinz::Clortho::Cli::SSHLogin.new
 
   parser = OptionParser.new do |opts|
     opts.banner = ssh_setup.usage_msg
@@ -18,22 +18,16 @@ begin
       puts Vinz::Clortho::VERSION
       exit 0
     end
-    opts.on('--add-to-github', 'Adds a public key to GitHub') do |v|
-      print "Enter your username: "
-      username = gets.chomp
-      print "Enter your password: "
-      password = STDIN.noecho(&:gets).chomp
-      puts # because previous line of code doesn't insert newline
-      uploader = Vinz::Clortho::GitHubKeyUploader.new(initials, username, password)
-      print "Enter title for key: "
-      title = gets.chomp
-      uploader.upload title
+    opts.on('--add-to-github', 'Adds a public key to Github') do |v|
+      sshlogin_cli.add_to_github(initials)
       exit 0
     end
   end
 
   parser.parse!
-  ssh_setup.login(initials)
+  sshlogin_cli.perform(initials)
+  puts "Key will expire at #{ssh_setup.key_expiry}"
+
 rescue OptionParser::InvalidOption => e
   puts parser
   exit 1
@@ -43,4 +37,3 @@ rescue => e
   exit (e.is_a? Vinz::Clortho::UserNotFoundError) ? 2 : 1
 end
 
-puts "Key will expire at #{ssh_setup.key_expiry}"

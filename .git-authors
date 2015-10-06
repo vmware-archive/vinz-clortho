@@ -2,11 +2,13 @@ pairs:
   lm: Liam Morley
   nc: Navyasri Canumalla
   em: Ehren Murdick
+  nm: Nick Mahoney
 
 email_addresses:
   lm: lmorley@pivotal.io
   nc: ncanumalla@pivotal.io
   em: emurdick@pivotal.io
+  nm: nmahoney@pivotal.io
 
 sshkey_paths:
    lm: /Volumes/lmorley/.ssh/id_rsa

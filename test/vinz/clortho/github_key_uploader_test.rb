@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Vinz::Clortho
-  class GitHubKeyUploaderTest < Minitest::Test
+  class GithubKeyUploaderTest < Minitest::Test
     def setup
       @initial_committers = {"authors" => {"hp" => "Harry Potter", "hg" => "Hermione Granger"},
                             "emails" => {"hp" => "hpotter@pivotal.io", "hg" => "hgranger@pivotal.io"},
@@ -14,7 +14,7 @@ module Vinz::Clortho
     end
 
     def test_uploads_a_key
-      uploader = GitHubKeyUploader.new('hp', 'hpotter', 'voldemort')
+      uploader = GithubKeyUploader.new('hp', 'hpotter', 'voldemort')
       client_mock = mock()
       client_mock.expects(:add_key).with('Secret Key', 'ssh-rsa AAA...')
       uploader.expects(:client).returns client_mock

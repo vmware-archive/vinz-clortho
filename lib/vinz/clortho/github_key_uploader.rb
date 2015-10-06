@@ -2,7 +2,7 @@ require 'octokit'
 
 module Vinz
   module Clortho
-    class GitHubKeyUploader
+    class GithubKeyUploader
       def initialize(initials, username, password)
         @manager = SSHKeyPathManager.new
         @initials = initials
