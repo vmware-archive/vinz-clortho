@@ -16,7 +16,7 @@ module Vinz
 
       private
       def client
-        @client ||= Octokit::Client.new(login: @username, password: @password)
+        @client ||= GithubClientWrapper.new(login: @username, password: @password)
       end
     end
   end
