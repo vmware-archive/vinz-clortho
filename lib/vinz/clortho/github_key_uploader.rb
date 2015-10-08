@@ -10,13 +10,18 @@ module Vinz
       end
 
       def upload(title)
-        key = File.open("#{@manager.key_path_for(@initials)}.pub", "r").read
+        key = file.read
         client.add_key(title, key)
       end
 
       private
+
       def client
         @client ||= GithubClientWrapper.new(login: @username, password: @password)
+      end
+
+      def file
+        @file ||= FileWrapper.open("#{@manager.key_path_for(@initials)}.pub", "r")
       end
     end
   end

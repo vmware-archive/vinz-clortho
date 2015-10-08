@@ -21,15 +21,21 @@ module Vinz
         uploader.expects(:client).returns client_mock
         file_mock = mock()
         file_mock.expects(:read).returns 'ssh-rsa AAA...'
-        File.expects(:open).with("/Volumes/hpotter/.ssh/id_rsa.pub", 'r').returns file_mock
+        uploader.expects(:file).returns file_mock
         uploader.upload('Secret Key')
       end
 
       def test_client
         uploader = GithubKeyUploader.new('hp', 'hpotter', 'voldemort')
-        assert uploader.send(:client).instance_of?(GithubClientWrapper)
+        GithubClientWrapper.expects(:new).with({login: 'hpotter', password: 'voldemort'}).returns('GithubClientWrapper instance')
+        assert_equal 'GithubClientWrapper instance', uploader.send(:client)
+      end
+
+      def test_file
+        uploader = GithubKeyUploader.new('hp', 'hpotter', 'voldemort')
+        FileWrapper.expects(:open).with("/Volumes/hpotter/.ssh/id_rsa.pub", 'r').returns('FileWrapper instance')
+        assert_equal 'FileWrapper instance', uploader.send(:file)
       end
     end
   end
 end
-
