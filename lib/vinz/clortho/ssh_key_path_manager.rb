@@ -16,15 +16,19 @@ module Vinz
     class SSHKeyPathManager
       attr_reader :key_paths
 
-      DEFAULT_KEY_PATH = '/Volumes/*/.ssh/id_rsa'
+      DEFAULT_KEYS = lambda { Dir['/Volumes/*/.ssh/id_rsa'].map { |path| KeyPathEntry.new(path) } }
 
       def initialize
         @key_paths = if git_authors_file.nil?
-          Dir[DEFAULT_KEY_PATH].map { |path| KeyPathEntry.new(path) }
+          DEFAULT_KEYS.call
         else
           git_authors = YAML::load_file(git_authors_file)
-          git_authors['sshkey_paths'].map do |initials, path|
-            KeyPathEntry.new(path, initials)
+          if git_authors.has_key? 'sshkey_paths'
+            git_authors['sshkey_paths'].map do |initials, path|
+              KeyPathEntry.new(path, initials)
+            end
+          else
+            DEFAULT_KEYS.call
           end
         end
       end

@@ -73,5 +73,19 @@ module Vinz::Clortho
         assert_includes keys, path
       end
     end
+
+    def test_key_paths_returns_all_available_paths_if_no_sshkey_paths
+      committers = @initial_committers.reject { |k, v| k == 'sshkey_paths' }
+      current_dir_git_authors = File.join(Dir.pwd, '.git-authors')
+      File.expects(:exist?).with(current_dir_git_authors).returns true
+      YAML.expects(:load_file).with(current_dir_git_authors).returns committers
+
+      keys = ["/Volumes/hpotter/.ssh/id_rsa", "/Volumes/hgranger/.ssh/id_rsa"]
+      Dir.expects(:[]).with("/Volumes/*/.ssh/id_rsa").returns(keys)
+      mgr = SSHKeyPathManager.new
+      mgr.key_paths.map(&:path).each do |path|
+        assert_includes keys, path
+      end
+    end
   end
 end
