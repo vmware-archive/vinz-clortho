@@ -1,4 +1,4 @@
-# Vinz Clortho
+# Vinz Clortho [![Build Status](https://travis-ci.org/pivotal/vinz-clortho.svg?branch=master)](https://travis-ci.org/pivotal/vinz-clortho)
 
 <img src="http://i.giphy.com/Sf0xvEgdWyraU.gif" alt="Vinz Clortho" width="100%">
 
