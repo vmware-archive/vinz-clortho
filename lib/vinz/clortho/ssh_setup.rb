@@ -1,5 +1,8 @@
 module Vinz
   module Clortho
+    class UnableToLoginError < StandardError
+    end
+
     class SSHSetup
       attr_reader :key_expiry
 
@@ -14,7 +17,6 @@ module Vinz
           login_all key_ttl
         else
           key_path = @ssh_key_path_mgr.key_path_for initials
-          raise Errno::ENOENT.new unless File.exist? key_path
           ssh_add(key_ttl, key_path)
         end
       end
@@ -25,6 +27,8 @@ module Vinz
           key_ttl = @key_expiry.to_i - Time.now.to_i
         end
 
+        raise UnableToLoginError.new('no key paths available') unless @ssh_key_path_mgr.key_paths.any?
+
         @ssh_key_path_mgr.key_paths.each do |key_path|
           path = key_path.path
           ssh_add(key_ttl, path) if File.exist?(path)
@@ -32,6 +36,7 @@ module Vinz
       end
 
       def ssh_add(key_ttl, key_path)
+        raise UnableToLoginError.new(Errno::ENOENT.new) unless File.exist? key_path
         `ssh-add -t #{key_ttl} #{key_path}`
       end
 

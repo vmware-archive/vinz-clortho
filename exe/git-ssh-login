@@ -26,7 +26,6 @@ begin
 
   parser.parse!
   sshlogin_cli.perform(initials)
-  puts "Key will expire at #{ssh_setup.key_expiry}"
 
 rescue OptionParser::InvalidOption => e
   puts parser

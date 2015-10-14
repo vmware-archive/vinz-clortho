@@ -4,13 +4,13 @@ module Vinz::Clortho
   class SSHSetupTest < Minitest::Test
 
     def setup
-      initial_committers = {"authors" => {"hp" => "Harry Potter", "hg" => "Hermione Granger"},
+      @initial_committers = {"authors" => {"hp" => "Harry Potter", "hg" => "Hermione Granger"},
                             "emails" => {"hp" => "hpotter@pivotal.io", "hg" => "hgranger@pivotal.io"},
                             "sshkey_paths" =>
                                 {"hp" => "/Volumes/hpotter/.ssh/id_rsa",
                                  "hg" => "/Volumes/hgranger/.ssh/id_rsa"}}
       File.expects(:exist?).with(File.join(Dir.pwd, '.git-authors')).returns true
-      YAML.expects(:load_file).with(File.join(Dir.pwd, '.git-authors')).returns initial_committers
+      YAML.expects(:load_file).with(File.join(Dir.pwd, '.git-authors')).returns @initial_committers
       SSHSetup.any_instance.stubs(:ssh_add)
       File.stubs(:exist?).with("/Volumes/hpotter/.ssh/id_rsa").returns(true)
     end
@@ -47,6 +47,22 @@ module Vinz::Clortho
       assert_equal expected_expiration, ssh_setup.key_expiry
     end
 
+    def test_login_sets_key_expiry_to_within_15_minutes_as_default
+      expected_expiration = Time.new(2015, 9, 28, 18, 15)
+      ssh_setup = login_at(Time.new(2015, 9, 28, 18, 0))
+
+      assert_equal expected_expiration, ssh_setup.key_expiry
+    end
+
+    def test_ssh_add_throws_exception_when_unable_to_find_key_file
+      SSHSetup.any_instance.unstub(:ssh_add)
+      File.expects(:exist?).with("/Volumes/hpotter/.ssh/id_rsa").returns(false)
+      ssh_setup = SSHSetup.new
+      assert_raises(UnableToLoginError) {
+        ssh_setup.ssh_add(1, "/Volumes/hpotter/.ssh/id_rsa")
+      }
+    end
+
     def test_login_all_calls_ssh_add_on_existing_keys
       ssh_setup = SSHSetup.new
       Time.stubs(:now).returns Time.new(2015, 9, 28, 6, 0)
@@ -75,18 +91,14 @@ module Vinz::Clortho
       assert_nil ssh_setup.key_expiry
     end
 
-    def test_login_sets_key_expiry_to_within_15_minutes_as_default
-      expected_expiration = Time.new(2015, 9, 28, 18, 15)
-      ssh_setup = login_at(Time.new(2015, 9, 28, 18, 0))
-
-      assert_equal expected_expiration, ssh_setup.key_expiry
-    end
-
-    def test_login_throws_exception_when_unable_to_find_key_file
-      File.expects(:exist?).with("/Volumes/hpotter/.ssh/id_rsa").returns(false)
+    def test_login_all_throws_exception_if_no_key_paths_exist
+      File.unstub(:exist?)
+      File.expects(:exist?).with(File.join(Dir.pwd, '.git-authors')).returns true
+      YAML.unstub(:load_file)
+      YAML.expects(:load_file).with(File.join(Dir.pwd, '.git-authors')).returns @initial_committers.merge('sshkey_paths' => {})
       ssh_setup = SSHSetup.new
-      error = assert_raises(Errno::ENOENT) {
-        ssh_setup.login("hp")
+      assert_raises(UnableToLoginError) {
+        ssh_setup.login_all
       }
     end
 
